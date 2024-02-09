@@ -1,10 +1,13 @@
-import { Button } from './components/ui/button'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import Home from './pages/Home'
+
+const queryClient = new QueryClient()
 
 function App() {
 	return (
-		<>
-			<Button>I work!</Button>
-		</>
+		<QueryClientProvider client={queryClient}>
+			<Home />
+		</QueryClientProvider>
 	)
 }
 
