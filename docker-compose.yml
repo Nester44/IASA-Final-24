@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  frontend:
+    build: ./frontend
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    ports:
+      - "${FRONTEND_PORT}:5173"
+    env_file:
+      - .env
+    tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./frontend/:/srv/app
+      - /srv/app/node_modules
+    depends_on:
+      - backend
+  backend:
+    build:
+      context: ./backend
+    command: flask run --host 0.0.0.0
+    env_file:
+      - .env
+    stop_signal: SIGINT
+    ports:
+      - '${BACKEND_PORT}:5000'
