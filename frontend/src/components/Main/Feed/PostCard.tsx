@@ -4,10 +4,8 @@ import { Post } from '@/lib/api/fetchAnalytics'
 
 type Props = {} & Post
 
-const PostCard = (props: Props) => {
-	const iconSrc = sources.find(
-		(source) => source.id === props.source.id,
-	)?.iconSrc
+const PostCard = ({ content, created, sentiment_rate, source }: Props) => {
+	const iconSrc = sources.find((s) => s.id === source.id)?.iconSrc
 	return (
 		<Card className='flex flex-col'>
 			<CardHeader>
@@ -18,18 +16,22 @@ const PostCard = (props: Props) => {
 							alt='twitter'
 							className='w-8 h-8 rounded'
 						/>
-						<p className='text-lg font-bold'>{props.source.name}</p>
+						<p className='text-lg font-bold'>{source.name}</p>
 					</div>
-					<Sentiment sentiment_rate={props.sentiment_rate} />
+					<Sentiment sentiment_rate={sentiment_rate} />
 				</div>
 			</CardHeader>
 			<CardContent className='flex-grow'>
-				<p>{props.content.slice(0, 265)}</p>
+				<p>
+					{content.length > 255
+						? `${content.slice(0, 255)}...`
+						: content}
+				</p>
 			</CardContent>
 
 			<CardFooter>
 				<p className='text-sm ml-auto  text-gray-500'>
-					{new Date(props.created).toLocaleString()}
+					{new Date(created).toLocaleString()}
 				</p>
 			</CardFooter>
 		</Card>
