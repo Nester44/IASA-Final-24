@@ -1,7 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
-from fetchers import XFetcher
+from fetchers import XFetcher, period_to_days
+from metrics import get_metrics, merge_metrics
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -13,12 +14,12 @@ def hello_world():
     return jsonify({"message": "Hello, World!"})
 
 
-fetchers = {
-    'x': XFetcher
+source_fetchers = {
+    'x': XFetcher()
 }
 
 
-@app.route("/fetch", methods=["GET"])
+@app.route("/analytics", methods=["GET"])
 @cross_origin()
 def fetch():
     query = request.args.get('q')
@@ -27,44 +28,25 @@ def fetch():
     sources = request.args.get('sources')
     if sources is None:
         return "Sources aren't specified", 400
-    # Does not work yet
     period = request.args.get('period')
+    days = period_to_days(period)
+    if days is None:
+        return "Invalid time period", 400
 
-    # Only X works for now
-    if sources == 'x':
-        fetcher = fetchers['x']()
+    fetchers = []
+    for source in sources.split(','):
+        if source not in source_fetchers:
+            return "Unknown source", 400
+        fetcher = source_fetchers[source]
+        fetchers.append(fetcher)
+
+    results = []
+    for fetcher in fetchers:
+        fetcher.set_period(days)
         posts = fetcher.fetch(query)
-        for post in posts:
-            post['source'] = {
-                'id': 'x',
-                'name': 'X (Twitter)'
-            }
-            post['sentiment_rate'] = 1
+        results.append(get_metrics(posts))
 
-        return jsonify({
-            'total_positives': 5,
-            'total_negatives': 1,
-            'total_neutral': 2,
-            'posts': posts,
-            'keywords': [
-                {
-                    'word': 'tezza',
-                    'value': 0.01986307225913374
-                },
-                {
-                    'word': 'кордон',
-                    'value': 0.024781376509218734
-                },
-                {
-                    'word': 'подружжя',
-                    'value': 0.02570533806449336
-                }
-            ]
-        })
-    else:
-        return "Not supported yet", 418
-
-    # for source in sources:
+    return jsonify(merge_metrics(results))
 
 
 if __name__ == "__main__":

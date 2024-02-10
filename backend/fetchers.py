@@ -6,6 +6,19 @@ from datetime import datetime, timedelta
 
 import os
 
+_time_periods = {
+    'day': 1,
+    'week': 7,
+    'month': 30
+}
+
+
+def period_to_days(period):
+    if period is None:
+        return _time_periods['day']
+    return _time_periods.get(period)
+
+
 _base_url = 'https://x.com'
 _search_params = '/search?q={}&src=typed_query&f=top'
 
@@ -33,6 +46,11 @@ class XFetcher:
 
         text = tweet.find_element(By.CSS_SELECTOR, '[data-testid="tweetText"]')
         post['content'] = text.text
+
+        post['source'] = {
+            'id': 'twitter',
+            'name': 'Twitter'
+        }
 
         return post
 
