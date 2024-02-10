@@ -29,8 +29,14 @@ const formSchema = z.object({
 		}),
 })
 
-const Header = () => {
-	const form = useForm<z.infer<typeof formSchema>>({
+export type SearchFormValues = z.infer<typeof formSchema>
+
+type Props = {
+	onSubmit: (values: SearchFormValues) => void
+}
+
+const Header = ({ onSubmit }: Props) => {
+	const form = useForm<SearchFormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			query: '',
@@ -38,10 +44,6 @@ const Header = () => {
 			sources: ['mctoday'],
 		},
 	})
-
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values)
-	}
 
 	return (
 		<header className='px-8 pt-8 border-b-2'>
