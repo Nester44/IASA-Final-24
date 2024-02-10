@@ -19,6 +19,7 @@ export const sources = [
 ] as const
 
 export type SourceId = typeof sources[number]['id']
+export const sourceIds = sources.map((source) => source.id)
 
 const formSchema = z.object({
 	query: z.string().min(2, {
