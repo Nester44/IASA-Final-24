@@ -8,7 +8,6 @@ export const Home = () => {
 	return (
 		<div>
 			<Header onSubmit={setSearchValues} />
-
 			<Suspense
 				fallback={
 					<div className=' flex items-center justify-center flex-col'>

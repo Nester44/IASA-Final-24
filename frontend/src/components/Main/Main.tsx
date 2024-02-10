@@ -15,11 +15,15 @@ const Main = ({ searchValues }: Props) => {
 		return null
 	}
 
-	const { data } = useSuspenseQuery({
+	const { data, isError } = useSuspenseQuery({
 		queryKey: ['search', searchValues!],
 		queryFn: fetchAnalytics,
 		refetchOnWindowFocus: false,
 	})
+
+	if (isError) {
+		return <div>Error</div>
+	}
 
 	return (
 		<div className='lg:max-w-[1200px] h-full px-16 mx-auto mt-4 mb-16'>

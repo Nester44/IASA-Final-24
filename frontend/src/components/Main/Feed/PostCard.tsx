@@ -12,11 +12,11 @@ const PostCard = (props: Props) => {
 		<Card className='flex flex-col'>
 			<CardHeader>
 				<div className='flex justify-between'>
-					<div>
+					<div className='flex gap-4'>
 						<img
 							src={iconSrc}
 							alt='twitter'
-							className='w-16 h-16 rounded'
+							className='w-8 h-8 rounded'
 						/>
 						<p className='text-lg font-bold'>{props.source.name}</p>
 					</div>
@@ -24,7 +24,7 @@ const PostCard = (props: Props) => {
 				</div>
 			</CardHeader>
 			<CardContent className='flex-grow'>
-				<p>{props.content}</p>
+				<p>{props.content.slice(0, 265)}</p>
 			</CardContent>
 
 			<CardFooter>
@@ -41,7 +41,7 @@ export default PostCard
 function Sentiment({ sentiment_rate }: { sentiment_rate: number }) {
 	return (
 		<p
-			className={`text-lg font-bold ${
+			className={`font-bold ${
 				sentiment_rate > 0
 					? 'text-green-500'
 					: sentiment_rate < 0
