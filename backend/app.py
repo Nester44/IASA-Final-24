@@ -15,7 +15,7 @@ def hello_world():
 
 
 source_fetchers = {
-    'x': XFetcher()
+    'twitter': XFetcher()
 }
 
 
