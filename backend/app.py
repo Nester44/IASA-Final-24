@@ -32,10 +32,13 @@ def fetch():
 
     # Only X works for now
     if sources == 'x':
-        fetcher = fetchers[sources]()
+        fetcher = fetchers['x']()
         posts = fetcher.fetch(query)
         for post in posts:
-            post['source'] = sources
+            post['source'] = {
+                'id': 'x',
+                'name': 'X (Twitter)'
+            }
             post['sentiment_rate'] = 1
 
         return jsonify({
