@@ -27,7 +27,7 @@ def get_metrics(posts):
 def merge_metrics(results):
     posts = []
     for result in results:
-        posts.append(result['posts'])
+        posts.extend(result['posts'])
     return {
         'total_positives': 5,
         'total_negatives': 1,

@@ -42,9 +42,13 @@ def fetch():
         fetchers.append(fetcher)
 
     results = []
+    post_id = 0
     for fetcher in fetchers:
         fetcher.set_period(days)
         posts = fetcher.fetch(query)
+        for post in posts:
+            post['id'] = post_id
+            post_id += 1
         results.append(get_metrics(posts))
 
     return jsonify(merge_metrics(results))

@@ -93,6 +93,7 @@ def _get_mctoday_content(soup):
     h.ignore_links = True
     h.ignore_images = True
 
+    # Come up with better scraping
     wrapper = soup.select('.content-inner,.post-content,.main-content')[0]
     for paragraph in wrapper.findAll('p'):
         contents = paragraph.contents[0]
@@ -137,6 +138,11 @@ class MctodayFetcher(Fetcher):
 
             post['title'] = title
             post['content'] = _get_mctoday_content(soup)
+            post['source'] = {
+                'id': 'mctoday',
+                'name': 'MC.today'
+            }
+            post['url'] = link
 
             posts.append(post)
 
