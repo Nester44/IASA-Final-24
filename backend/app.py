@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
 from fetchers import XFetcher, MctodayFetcher, period_to_days
-from metrics import get_metrics, merge_metrics
+from metrics import combined_function
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -49,10 +49,9 @@ def fetch():
         for post in posts:
             post['id'] = post_id
             post_id += 1
-        results.append(combined_function(posts))
+        results.extend(posts)
 
-
-    return jsonify(merge_metrics(results))
+    return combined_function(results)
 
 
 if __name__ == "__main__":

@@ -1,12 +1,7 @@
-import time
-from datetime import datetime, timedelta
 import pandas as pd
-import numpy as np
-import re
 from textblob import TextBlob
 from stop_words import get_stop_words
-import take
-
+import yake
 def get_metrics(posts):
     for post in posts:
         post['sentiment_rate'] = 1
@@ -97,13 +92,8 @@ def sentiment_analyser(data_list):
     posts_data = []
 
     for index, row in sentiment_df.iterrows():
-        post_info = {
-            "sentiment_rate": row["polarity"],
-            "content": row["content"],
-            "created": data_list[index]["timestamp"],
-            # тайтл (тільки для новин) і соурс
-        }
-        posts_data.append(post_info)
+        data_list[index]["sentiment_rate"] = row["polarity"]
+        posts_data.append(data_list[index])
 
     result = {
         "total_positives": total_positives,
