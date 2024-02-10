@@ -1,5 +1,6 @@
 import Header, { SearchFormValues } from '@/components/Header/Header'
 import Main from '@/components/Main/Main'
+import MainLoader from '@/components/Main/MainLoader'
 import { Suspense, useState } from 'react'
 
 export const Home = () => {
@@ -8,21 +9,8 @@ export const Home = () => {
 	return (
 		<div>
 			<Header onSubmit={setSearchValues} />
-			<Suspense
-				fallback={
-					<div className=' flex items-center justify-center flex-col'>
-						<img
-							src='/team.jpg'
-							alt='Loading'
-							className='max-h-[450px] mt-24 aspect-square'
-						/>
-						<p className='text-2xl font-bold mt-8'>
-							Please wait for our scraping team to collect the
-							data...
-						</p>
-					</div>
-				}
-			>
+
+			<Suspense fallback={<MainLoader />}>
 				<Main searchValues={searchValues} />
 			</Suspense>
 		</div>
