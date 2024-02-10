@@ -13,7 +13,7 @@ def hello_world():
     return jsonify({"message": "Hello, World!"})
 
 
-fetchers = {"x": XFetcher}
+fetchers = {"twitter": XFetcher}
 
 
 @app.route("/analytics", methods=["GET"])
@@ -29,8 +29,8 @@ def fetch():
     period = request.args.get("period")
 
     # Only X works for now
-    if sources == "x":
-        fetcher = fetchers["x"]()
+    if sources == "twitter":
+        fetcher = fetchers["twitter"]()
         posts = fetcher.fetch(query)
         for post in posts:
             post["source"] = {"id": "twitter", "name": "Twitter"}
