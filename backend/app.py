@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
-from fetchers import XFetcher, period_to_days
+from fetchers import XFetcher, MctodayFetcher, period_to_days
 from metrics import get_metrics, merge_metrics
 
 app = Flask(__name__)
@@ -15,7 +15,8 @@ def hello_world():
 
 
 source_fetchers = {
-    'twitter': XFetcher()
+    'twitter': XFetcher(),
+    'mctoday': MctodayFetcher()
 }
 
 

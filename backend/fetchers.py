@@ -6,6 +6,12 @@ from datetime import datetime, timedelta
 
 import os
 
+import requests
+from bs4 import BeautifulSoup
+import html2text
+
+import locale
+
 _time_periods = {
     'day': 1,
     'week': 7,
@@ -19,28 +25,32 @@ def period_to_days(period):
     return _time_periods.get(period)
 
 
-_base_url = 'https://x.com'
-_search_params = '/search?q={}&src=typed_query&f=top'
-
-
-def _get_timestamp(tweet):
+def _get_tweet_timestamp(tweet):
     time_element = tweet.find_element(By.TAG_NAME, 'time')
     time_text = time_element.get_attribute('datetime')
     time_obj = datetime.strptime(time_text, "%Y-%m-%dT%H:%M:%S.%fZ")
     return time.mktime(time_obj.timetuple())
 
 
-class XFetcher:
+class Fetcher:
     def __init__(self):
-        self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(30)
         self.min_timestamp = datetime.timestamp(datetime.today() - timedelta(days=1))
 
     def set_period(self, days):
         self.min_timestamp = datetime.timestamp(datetime.today() - timedelta(days=days))
 
+
+class XFetcher(Fetcher):
+    def __init__(self):
+        super().__init__()
+        self.base_url = 'https://x.com'
+        self.search_params = '/search?q={}&src=typed_query&f=top'
+
+        self.driver = webdriver.Firefox()
+        self.driver.implicitly_wait(30)
+
     def __parse(self, tweet):
-        post = {'created': _get_timestamp(tweet)}
+        post = {'created': _get_tweet_timestamp(tweet)}
         if post['created'] < self.min_timestamp:
             return None
 
@@ -55,9 +65,9 @@ class XFetcher:
         return post
 
     def fetch(self, query):
-        self.driver.get(_base_url)
+        self.driver.get(self.base_url)
         self.driver.add_cookie({"name": "auth_token", "value": os.environ.get('TWITTER_COOKIE')})
-        self.driver.get(_base_url + _search_params.format(query))
+        self.driver.get(self.base_url + self.search_params.format(query))
         # Wait for the first batch of data
         time.sleep(1)
 
@@ -73,5 +83,61 @@ class XFetcher:
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             # Wait instead for loader to disappear
             time.sleep(0.5)
+
+        return posts
+
+
+def _get_mctoday_content(soup):
+    content = ''
+    h = html2text.HTML2Text()
+    h.ignore_links = True
+    h.ignore_images = True
+
+    wrapper = soup.select('.content-inner,.post-content,.main-content')[0]
+    for paragraph in wrapper.findAll('p'):
+        contents = paragraph.contents[0]
+        if contents is not None:
+            text = h.handle(str(contents))
+            content += text
+
+    return content
+
+
+def _get_mctoday_timestamp(soup):
+    date_text = soup.select('.meta-datetime')[0].contents[0]
+    locale.setlocale(locale.LC_TIME, 'uk_UA')
+    # Set back
+    return time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple())
+
+
+class MctodayFetcher(Fetcher):
+    def __init__(self):
+        super().__init__()
+        self.base_url = 'https://mc.today/uk'
+
+    def fetch(self, query):
+        params = {'s': query}
+        response = requests.get('https://mc.today/uk', params=params)
+
+        soup = BeautifulSoup(response.content, 'html.parser')
+        resources = []
+        for title in soup.select('.news-title'):
+            title_text = str(title.contents[0])
+            resources.append((title_text, title.parent['href']))
+
+        posts = []
+        for [title, link] in resources:
+            post = {}
+            response = requests.get(link)
+            soup = BeautifulSoup(response.content, 'html.parser')
+
+            post['timestamp'] = _get_mctoday_timestamp(soup)
+            if post['timestamp'] < self.min_timestamp:
+                break
+
+            post['title'] = title
+            post['content'] = _get_mctoday_content(soup)
+
+            posts.append(post)
 
         return posts
