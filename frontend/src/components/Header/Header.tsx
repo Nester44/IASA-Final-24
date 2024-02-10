@@ -11,10 +11,11 @@ import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 
 export const sources = [
-	{ id: 'mctoday', name: 'MC Today', iconSrc: './mctoday.png' },
-	{ id: 'bbc', name: 'BBC', iconSrc: 'bbc.jpeg' },
-	{ id: 'cnn', name: 'CNN', iconSrc: './cnn.png' },
 	{ id: 'twitter', name: 'Twitter', iconSrc: 'twitter.png' },
+	{ id: 'mctoday', name: 'MC Today', iconSrc: 'mctoday.png' },
+	{ id: 'bbc', name: 'BBC', iconSrc: 'bbc.jpeg' },
+	{ id: 'cnn', name: 'CNN', iconSrc: 'cnn.png' },
+	{ id: 'breitbart', name: 'Breitbart', iconSrc: 'breitbart.png' },
 ] as const
 
 export type SourceId = typeof sources[number]['id']
@@ -43,7 +44,7 @@ const Header = ({ onSubmit }: Props) => {
 		defaultValues: {
 			query: '',
 			period: 'day',
-			sources: ['mctoday'],
+			sources: ['mctoday', 'twitter'],
 		},
 	})
 
