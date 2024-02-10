@@ -25,6 +25,14 @@ const Main = ({ searchValues }: Props) => {
 		return <div>Error</div>
 	}
 
+	if (data.posts.length === 0) {
+		return (
+			<p className='text-center text-lg mt-80'>
+				No results found. Try to change the filters or query.
+			</p>
+		)
+	}
+
 	return (
 		<div className='lg:max-w-[1200px] h-full px-16 mx-auto mt-4 mb-16'>
 			<Tabs
