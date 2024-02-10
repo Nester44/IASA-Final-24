@@ -11,11 +11,11 @@ export const Home = () => {
 
 			<Suspense
 				fallback={
-					<div className='w-full h-full flex items-center justify-center flex-col'>
+					<div className=' flex items-center justify-center flex-col'>
 						<img
 							src='/team.jpg'
 							alt='Loading'
-							className='w-96 h-96 mt-10'
+							className='max-h-[450px] mt-24 aspect-square'
 						/>
 						<p className='text-2xl font-bold mt-8'>
 							Please wait for our scraping team to collect the
