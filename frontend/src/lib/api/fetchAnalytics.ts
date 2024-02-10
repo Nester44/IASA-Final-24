@@ -27,7 +27,7 @@ export type Analytics = {
 	keywords: [
 		{
 			word: string
-			occurences: number
+			value: number
 		},
 	]
 }

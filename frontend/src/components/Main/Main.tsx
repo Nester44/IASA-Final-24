@@ -3,7 +3,7 @@ import { TabsContent } from '@radix-ui/react-tabs'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { SearchFormValues } from '../Header/Header'
 import { Tabs, TabsList, TabsTrigger } from '../ui/tabs'
-import Charts from './Charts'
+import Charts from './Charts/Charts'
 import Feed from './Feed/Feed'
 
 type Props = {
@@ -48,7 +48,7 @@ const Main = ({ searchValues }: Props) => {
 					<Feed posts={data.posts} />
 				</TabsContent>
 				<TabsContent value='charts'>
-					<Charts />
+					<Charts {...data} />
 				</TabsContent>
 			</Tabs>
 		</div>
