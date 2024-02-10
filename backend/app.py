@@ -49,7 +49,7 @@ def fetch():
         for post in posts:
             post['id'] = post_id
             post_id += 1
-        results.append(get_metrics(posts))
+        results.append(combined_function(posts))
 
 
     return jsonify(merge_metrics(results))
