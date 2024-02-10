@@ -31,7 +31,7 @@ const PostCard = ({ content, created, sentiment_rate, source }: Props) => {
 
 			<CardFooter>
 				<p className='text-sm ml-auto  text-gray-500'>
-					{new Date(created).toLocaleString()}
+					{new Date(created * 1000).toLocaleString()}
 				</p>
 			</CardFooter>
 		</Card>

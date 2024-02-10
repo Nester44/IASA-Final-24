@@ -163,8 +163,8 @@ class MctodayFetcher(Fetcher):
             response = requests.get(link)
             soup = BeautifulSoup(response.content, 'html.parser')
 
-            post['timestamp'] = _get_mctoday_timestamp(soup)
-            if post['timestamp'] < self.min_timestamp:
+            post['created'] = _get_mctoday_timestamp(soup)
+            if post['created'] < self.min_timestamp:
                 break
 
             post['title'] = title
