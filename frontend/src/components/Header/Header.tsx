@@ -26,7 +26,7 @@ const formSchema = z.object({
 	}),
 	period: z.enum(['day', 'week', 'month']),
 	sources: z
-		.array(z.enum(['mctoday', 'bbc', 'cnn', 'twitter']))
+		.array(z.enum(['mctoday', 'bbc', 'cnn', 'twitter', 'breitbart']))
 		.refine((sources) => sources.length > 0, {
 			message: 'At least one source must be selected.',
 		}),
@@ -95,7 +95,7 @@ const Header = ({ onSubmit }: Props) => {
 						<Button type='submit'>Search</Button>
 					</div>
 
-					<ScrollArea className='w-full whitespace-nowrap py-4'>
+					<ScrollArea className='w-full whitespace-nowrap py-6'>
 						<div className='flex w-max space-x-4 m-auto'>
 							{sources.map((source) => (
 								<FormField
@@ -153,16 +153,3 @@ const Header = ({ onSubmit }: Props) => {
 }
 
 export default Header
-// <Checkbox
-// 	{...field}
-// 	label={
-// 		<Label className='flex items-center space-x-2' htmlFor={source.id}>
-// 			<img
-// 				src={source.iconSrc}
-// 				alt={source.name}
-// 				className='w-8 h-8'
-// 			/>
-// 			{source.name}
-// 		</Label>
-// 	}
-// />,
