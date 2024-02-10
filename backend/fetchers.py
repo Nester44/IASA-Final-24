@@ -29,7 +29,13 @@ def _get_tweet_timestamp(tweet):
     time_element = tweet.find_element(By.TAG_NAME, 'time')
     time_text = time_element.get_attribute('datetime')
     time_obj = datetime.strptime(time_text, "%Y-%m-%dT%H:%M:%S.%fZ")
-    return time.mktime(time_obj.timetuple())
+    return int(time.mktime(time_obj.timetuple()))
+
+def _get_tweet_username(tweet):
+    name_element = tweet.find_element(By.CSS_SELECTOR, '[data-testid="User-Name"]')
+    for spans in name_element.find_elements(By.TAG_NAME, 'span'):
+        if '@' in spans.text:
+            return spans.text
 
 
 class Fetcher:
@@ -48,6 +54,8 @@ class XFetcher(Fetcher):
 
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(30)
+        self.driver.get(self.base_url)
+        self.driver.add_cookie({"name": "auth_token", "value": os.environ.get('TWITTER_COOKIE')})
 
     def __parse(self, tweet):
         post = {'created': _get_tweet_timestamp(tweet)}
@@ -55,7 +63,10 @@ class XFetcher(Fetcher):
             return None
 
         text = tweet.find_element(By.CSS_SELECTOR, '[data-testid="tweetText"]')
-        post["content"] = text.text
+        post['content'] = text.text
+        post['author'] = _get_tweet_username(tweet)
+        post['url'] = self.base_url + '/{}'.format(post['author'].replace('@', ''))
+
 
         post['source'] = {
             'id': 'twitter',
@@ -65,26 +76,27 @@ class XFetcher(Fetcher):
         return post
 
     def fetch(self, query):
-        self.driver.get(self.base_url)
-        self.driver.add_cookie({"name": "auth_token", "value": os.environ.get('TWITTER_COOKIE')})
         self.driver.get(self.base_url + self.search_params.format(query))
         # Wait for the first batch of data
-        time.sleep(1)
+        time.sleep(4)
 
         posts = []
         for _ in range(5):
             tweets = self.driver.find_elements(By.CSS_SELECTOR, '[data-testid="tweet"]')
             for tweet in tweets:
-                article = self.__parse(tweet)
-                if article is not None:
-                    posts.append(article)
+                post = self.__parse(tweet)
+                if post is None:
+                    continue
+                if any(p['author'] == post['author'] and p['created'] == post['created'] for p in posts):
+                    continue
+                posts.append(post)
 
             # Scroll down to load more data
             self.driver.execute_script(
                 "window.scrollTo(0, document.body.scrollHeight);"
             )
             # Wait instead for loader to disappear
-            time.sleep(0.5)
+            time.sleep(2)
 
         return posts
 
@@ -110,7 +122,7 @@ def _get_mctoday_timestamp(soup):
     date_text = soup.select('.meta-datetime')[0].contents[0]
     locale.setlocale(locale.LC_TIME, 'uk_UA')
     # Set back
-    return time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple())
+    return int(time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple()))
 
 
 class MctodayFetcher(Fetcher):

@@ -10,12 +10,15 @@ import { Label } from '../ui/label'
 import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 
-const sources = [
-	{ id: 'mctoday', name: 'MC Today', iconSrc: './mctoday.png' },
-	{ id: 'bbc', name: 'BBC', iconSrc: 'bbc.jpeg' },
-	{ id: 'cnn', name: 'CNN', iconSrc: './cnn.png' },
+export const sources = [
 	{ id: 'twitter', name: 'Twitter', iconSrc: 'twitter.png' },
+	{ id: 'mctoday', name: 'MC Today', iconSrc: 'mctoday.png' },
+	{ id: 'bbc', name: 'BBC', iconSrc: 'bbc.jpeg' },
+	{ id: 'cnn', name: 'CNN', iconSrc: 'cnn.png' },
+	{ id: 'breitbart', name: 'Breitbart', iconSrc: 'breitbart.png' },
 ] as const
+
+export type SourceId = typeof sources[number]['id']
 
 const formSchema = z.object({
 	query: z.string().min(2, {
@@ -29,19 +32,21 @@ const formSchema = z.object({
 		}),
 })
 
-const Header = () => {
-	const form = useForm<z.infer<typeof formSchema>>({
+export type SearchFormValues = z.infer<typeof formSchema>
+
+type Props = {
+	onSubmit: (values: SearchFormValues) => void
+}
+
+const Header = ({ onSubmit }: Props) => {
+	const form = useForm<SearchFormValues>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			query: '',
 			period: 'day',
-			sources: ['mctoday'],
+			sources: ['mctoday', 'twitter'],
 		},
 	})
-
-	function onSubmit(values: z.infer<typeof formSchema>) {
-		console.log(values)
-	}
 
 	return (
 		<header className='px-8 pt-8 border-b-2'>

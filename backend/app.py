@@ -13,7 +13,7 @@ cors = CORS(app)
 def hello_world():
     return jsonify({"message": "Hello, World!"})
 
-
+# ids are: mctoday, bbc, cnn, twitter, breitbart
 source_fetchers = {
     'twitter': XFetcher(),
     'mctoday': MctodayFetcher()
