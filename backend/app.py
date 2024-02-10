@@ -23,10 +23,10 @@ source_fetchers = {
 @app.route("/analytics", methods=["GET"])
 @cross_origin()
 def fetch():
-    query = request.args.get('q')
+    query = request.args.get("q")
     if query is None:
         return "Query aren't specified", 400
-    sources = request.args.get('sources')
+    sources = request.args.get("sources")
     if sources is None:
         return "Sources aren't specified", 400
     period = request.args.get('period')
@@ -50,6 +50,7 @@ def fetch():
             post['id'] = post_id
             post_id += 1
         results.append(get_metrics(posts))
+
 
     return jsonify(merge_metrics(results))
 

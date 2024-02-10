@@ -9,8 +9,8 @@ import os
 import requests
 from bs4 import BeautifulSoup
 import html2text
-
 import locale
+
 
 _time_periods = {
     'day': 1,
@@ -55,7 +55,7 @@ class XFetcher(Fetcher):
             return None
 
         text = tweet.find_element(By.CSS_SELECTOR, '[data-testid="tweetText"]')
-        post['content'] = text.text
+        post["content"] = text.text
 
         post['source'] = {
             'id': 'twitter',
@@ -80,7 +80,9 @@ class XFetcher(Fetcher):
                     posts.append(article)
 
             # Scroll down to load more data
-            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            self.driver.execute_script(
+                "window.scrollTo(0, document.body.scrollHeight);"
+            )
             # Wait instead for loader to disappear
             time.sleep(0.5)
 
