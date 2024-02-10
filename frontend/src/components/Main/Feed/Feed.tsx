@@ -1,4 +1,5 @@
 import { Post } from '@/lib/api/fetchAnalytics'
+import PostCard from './PostCard'
 
 type Props = {
 	posts: Post[]
@@ -6,10 +7,10 @@ type Props = {
 
 const Feed = ({ posts }: Props) => {
 	return (
-		<div>
-			{/* {posts.map((post) => (
-				<PostCard {...post} />
-			))} */}
+		<div className='grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
+			{posts.map((post) => (
+				<PostCard key={post.id} {...post} />
+			))}
 		</div>
 	)
 }

@@ -10,12 +10,14 @@ import { Label } from '../ui/label'
 import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 
-const sources = [
+export const sources = [
 	{ id: 'mctoday', name: 'MC Today', iconSrc: './mctoday.png' },
 	{ id: 'bbc', name: 'BBC', iconSrc: 'bbc.jpeg' },
 	{ id: 'cnn', name: 'CNN', iconSrc: './cnn.png' },
 	{ id: 'twitter', name: 'Twitter', iconSrc: 'twitter.png' },
 ] as const
+
+export type SourceId = typeof sources[number]['id']
 
 const formSchema = z.object({
 	query: z.string().min(2, {

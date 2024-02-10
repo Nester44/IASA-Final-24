@@ -1,4 +1,4 @@
-import { SearchFormValues } from '@/components/Header/Header'
+import { SearchFormValues, SourceId } from '@/components/Header/Header'
 import { QueryFunctionContext } from '@tanstack/react-query'
 import axios from 'axios'
 
@@ -7,7 +7,7 @@ const instance = axios.create({
 })
 
 export type Source = {
-	id: string
+	id: SourceId
 	name: string
 }
 
@@ -16,6 +16,7 @@ export type Post = {
 	content: string
 	created: number
 	source: Source
+	id: number
 }
 
 export type Analytics = {

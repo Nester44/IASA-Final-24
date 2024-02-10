@@ -22,7 +22,7 @@ const Main = ({ searchValues }: Props) => {
 	})
 
 	return (
-		<div className='lg:max-w-[1200px] h-full px-16 mx-auto mt-4'>
+		<div className='lg:max-w-[1200px] h-full px-16 mx-auto mt-4 mb-16'>
 			<Tabs
 				defaultValue='feed'
 				className='flex justify-center flex-col items-center space-y-8'
