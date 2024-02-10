@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 
 import time
 from datetime import datetime, timedelta
@@ -26,23 +27,32 @@ def period_to_days(period):
 
 
 def _get_tweet_timestamp(tweet):
-    time_element = tweet.find_element(By.TAG_NAME, 'time')
-    time_text = time_element.get_attribute('datetime')
-    time_obj = datetime.strptime(time_text, "%Y-%m-%dT%H:%M:%S.%fZ")
-    return int(time.mktime(time_obj.timetuple()))
+    try:
+        time_element = tweet.find_element(By.TAG_NAME, 'time')
+        time_text = time_element.get_attribute('datetime')
+        time_obj = datetime.strptime(time_text, "%Y-%m-%dT%H:%M:%S.%fZ")
+        return int(time.mktime(time_obj.timetuple()))
+    except NoSuchElementException:
+        return ''
+
 
 def _get_tweet_username(tweet):
-    name_element = tweet.find_element(By.CSS_SELECTOR, '[data-testid="User-Name"]')
-    for spans in name_element.find_elements(By.TAG_NAME, 'span'):
-        if '@' in spans.text:
-            return spans.text
+    try:
+        name_element = tweet.find_element(By.CSS_SELECTOR, '[data-testid="User-Name"]')
+        for spans in name_element.find_elements(By.TAG_NAME, 'span'):
+            if '@' in spans.text:
+                return spans.text
+    except NoSuchElementException:
+        return ''
 
 
 class Fetcher:
     def __init__(self):
+        self.days = 1
         self.min_timestamp = datetime.timestamp(datetime.today() - timedelta(days=1))
 
     def set_period(self, days):
+        self.days = days
         self.min_timestamp = datetime.timestamp(datetime.today() - timedelta(days=days))
 
 
@@ -51,9 +61,10 @@ class XFetcher(Fetcher):
         super().__init__()
         self.base_url = 'https://x.com'
         self.search_params = '/search?q={}&src=typed_query&f=top'
+        self.base_scrolls = 5
+        self.scroll_increase = 0.75
 
         self.driver = webdriver.Firefox()
-        self.driver.implicitly_wait(30)
         self.driver.get(self.base_url)
         self.driver.add_cookie({"name": "auth_token", "value": os.environ.get('TWITTER_COOKIE')})
 
@@ -62,8 +73,12 @@ class XFetcher(Fetcher):
         if post['created'] < self.min_timestamp:
             return None
 
-        text = tweet.find_element(By.CSS_SELECTOR, '[data-testid="tweetText"]')
-        post['content'] = text.text
+        try:
+            text = tweet.find_element(By.CSS_SELECTOR, '[data-testid="tweetText"]')
+            post['content'] = text.text
+        except NoSuchElementException:
+            post['content'] = ''
+
         post['author'] = _get_tweet_username(tweet)
         post['url'] = self.base_url + '/{}'.format(post['author'].replace('@', ''))
 
@@ -80,8 +95,10 @@ class XFetcher(Fetcher):
         # Wait for the first batch of data
         time.sleep(4)
 
+        scrolls = self.base_scrolls + (self.days - 1) * self.scroll_increase
+
         posts = []
-        for _ in range(5):
+        for _ in range(int(scrolls)):
             tweets = self.driver.find_elements(By.CSS_SELECTOR, '[data-testid="tweet"]')
             for tweet in tweets:
                 post = self.__parse(tweet)
