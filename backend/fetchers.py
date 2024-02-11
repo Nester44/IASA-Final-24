@@ -248,8 +248,10 @@ def create_article_dict(article):
     }
 
 
-def get_articles_from_sources(search_query, api_key, sources, from_date, to_date):
-    params = {'q': search_query, 'apiKey': api_key, 'sources': ','.join(sources), 'from': int(from_date), 'to': int(to_date)}
+def get_articles_from_sources(search_query, api_key, sources, from_date):
+    from_obj = datetime.fromtimestamp(from_date)
+    params = {'q': search_query, 'apiKey': api_key, 'sources': ','.join(sources), 'from': from_obj.strftime('%Y-%m-%d')}
+    print(params)
     url = 'https://newsapi.org/v2/everything'
 
     try:
@@ -271,9 +273,6 @@ def get_articles_from_sources(search_query, api_key, sources, from_date, to_date
 
 class NewsFetcher(Fetcher):
     def fetch_all(self, query, sources):
-        # From_date depends on the mode selected by the user
-        from_date = datetime.timestamp(datetime.today() - timedelta(days=1))
-
         api_key = os.environ.get('NEWS_API_KEY')
 
-        return get_articles_from_sources(query, api_key, sources, from_date, self.min_timestamp)
+        return get_articles_from_sources(query, api_key, sources, self.min_timestamp)
