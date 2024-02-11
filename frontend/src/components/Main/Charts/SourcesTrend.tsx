@@ -1,4 +1,4 @@
-import { SourceId } from '@/components/Header/Header'
+import { SourceId, sources } from '@/components/Header/Header'
 import { Post } from '@/lib/api/fetchAnalytics'
 import {
 	Bar,
@@ -34,6 +34,15 @@ const mapPostsToData = (posts: Post[]) => {
 				positives: 0,
 			}
 		}
+
+		const sentiment = post.sentiment_rate
+		if (sentiment < 0) {
+			sentimentsBySource[sourceId]!.negatives++
+		} else if (sentiment > 0) {
+			sentimentsBySource[sourceId]!.positives++
+		} else {
+			sentimentsBySource[sourceId]!.neutrals++
+		}
 	}
 
 	for (const key in sentimentsBySource) {
@@ -46,10 +55,10 @@ const mapPostsToData = (posts: Post[]) => {
 		const { negatives, neutrals, positives } = a
 
 		result.push({
-			sourceId,
-			negatives,
-			neutrals,
-			positives,
+			sourceId: sources.find((source) => source.id === sourceId)!.name,
+			Negative: negatives,
+			Neutral: neutrals,
+			Positive: positives,
 		})
 	}
 
@@ -60,11 +69,9 @@ const SourcesTrend = ({ posts }: Props) => {
 	const data = mapPostsToData(posts)
 	console.log(data)
 	return (
-		<div className='w-[600px] h-[400px]'>
-			{/* <ResponsiveContainer width='100%' height='100%'>
+		<div className='w-[350px] h-[350px] bg-slate-950'>
+			<ResponsiveContainer width='100%' height='100%'>
 				<BarChart
-					width={500}
-					height={300}
 					data={data}
 					margin={{
 						top: 20,
@@ -74,14 +81,18 @@ const SourcesTrend = ({ posts }: Props) => {
 					}}
 				>
 					<CartesianGrid strokeDasharray='3 3' />
-					<XAxis dataKey='date' />
-					<YAxis min={0} max={32} />
-					<Tooltip labelStyle={{ color: 'red' }} />
+					<XAxis dataKey='sourceId' />
+					<YAxis />
+					<Tooltip
+						wrapperClassName='p-2 rounded-lg border shadow-lg'
+						contentStyle={{ background: 'black', border: 'none' }}
+					/>
 					<Legend />
-					<Bar dataKey='twitter' stackId='a' fill='#8884d8' />
-					<Bar dataKey='mctoday' stackId='a' fill='#82ca9d' />
+					<Bar dataKey='Positive' stackId='a' fill='#4ade80' />
+					<Bar dataKey='Neutral' stackId='a' fill='#60a5fa' />
+					<Bar dataKey='Negative' stackId='a' fill='#f87171' />
 				</BarChart>
-			</ResponsiveContainer> */}
+			</ResponsiveContainer>
 		</div>
 	)
 }
