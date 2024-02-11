@@ -141,9 +141,11 @@ def _get_mctoday_content(soup):
 
 def _get_mctoday_timestamp(soup):
     date_text = soup.select('.meta-datetime')[0].contents[0]
-    locale.setlocale(locale.LC_TIME, 'uk_UA')
-    # Set back
-    return int(time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple()))
+    try:
+        locale.setlocale(locale.LC_TIME, 'uk_UA')
+        return int(time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple()))
+    except locale.Error:
+        return datetime.timestamp(datetime.now())
 
 
 class MctodayFetcher(Fetcher):
