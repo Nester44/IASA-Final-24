@@ -13,7 +13,7 @@ def get_keywords(post):
   deduplication_threshold = 0.5
   deduplication_algo = 'seqm'
   windowSize = 3
-  numOfKeywords = 10
+  numOfKeywords = 20
 
   kw_extractor = yake.KeywordExtractor(lan=language, n=max_ngram_size, dedupLim=deduplication_threshold, dedupFunc=deduplication_algo, windowsSize=windowSize, top=numOfKeywords, features=None, stopwords=stopwords_specific)
   return kw_extractor.extract_keywords(post)
