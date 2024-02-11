@@ -12,7 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 import html2text
 import locale
-import json
+import concurrent.futures
 
 
 _time_periods = {
@@ -254,7 +254,6 @@ def create_article_dict(article):
 def get_articles_from_sources(search_query, api_key, sources, from_date):
     from_obj = datetime.fromtimestamp(from_date)
     params = {'q': search_query, 'apiKey': api_key, 'sources': ','.join(sources), 'from': from_obj.strftime('%Y-%m-%d')}
-    print(params)
     url = 'https://newsapi.org/v2/everything'
 
     try:
@@ -264,8 +263,11 @@ def get_articles_from_sources(search_query, api_key, sources, from_date):
             data = response.json()
             concrete_data_list = []
             if "articles" in data:
-                for article in data["articles"]:
-                    concrete_data_list.append(create_article_dict(article))
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    results = list(executor.map(create_article_dict, data["articles"]))
+                for result in results:
+                    if result["content"] is not None:
+                        concrete_data_list.append(result)
 
             return concrete_data_list
         else:

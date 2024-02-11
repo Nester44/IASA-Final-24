@@ -25,7 +25,7 @@ news_fetchers = ['bbc-news', 'cnn', 'breitbart-news']
 
 @app.route("/analytics", methods=["GET"])
 @cross_origin()
-def fetch():
+def analytics():
     query = request.args.get("q")
     if query is None:
         return "Query aren't specified", 400
