@@ -49,6 +49,8 @@ def sentiment_analyser(data_list):
 
     for index, row in sentiment_df.iterrows():
         data_list[index]["sentiment_rate"] = row["polarity"]
+        data_list[index]["content"] = data_list[index]["content"][:255]
+        data_list[index]["id"] = index
         posts_data.append(data_list[index])
 
     result = {
