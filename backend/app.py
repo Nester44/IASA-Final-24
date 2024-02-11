@@ -4,6 +4,8 @@ from flask_cors import CORS, cross_origin
 from fetchers import XFetcher, MctodayFetcher, NewsFetcher, period_to_days
 from metrics import get_metrics
 
+import concurrent.futures
+
 app = Flask(__name__)
 cors = CORS(app)
 
@@ -48,25 +50,24 @@ def analytics():
         else:
             return "Unknown source", 400
 
-    results = []
-    post_id = 0
-    for fetcher in fetchers:
-        fetcher.set_period(days)
-        posts = fetcher.fetch(query)
-        for post in posts:
-            post['id'] = post_id
-            post_id += 1
-        results.extend(posts)
-    
-    if len(news_sources) != 0:
-        nf.set_period(days)
-        posts = nf.fetch_all(query, news_sources)
-        for post in posts:
-            post['id'] = post_id
-            post_id += 1
-        results.extend(posts)
+    def fetch_from(f):
+        f.set_period(days)
+        posts = []
+        if isinstance(f, NewsFetcher):
+            if len(news_sources) != 0:
+                posts.extend(f.fetch_all(query, news_sources))
+        else:
+            posts.extend(f.fetch(query))
+        return posts
 
-    return get_metrics(results)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        results = list(executor.map(fetch_from, fetchers + [nf]))
+
+    post_list = []
+    for result in results:
+        post_list.extend(result)
+
+    return get_metrics(post_list)
 
 
 if __name__ == "__main__":
