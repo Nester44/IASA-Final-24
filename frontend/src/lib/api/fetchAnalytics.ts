@@ -17,6 +17,7 @@ export type Post = {
 	created: number
 	source: Source
 	id: number
+	url: string
 }
 
 export type Analytics = {

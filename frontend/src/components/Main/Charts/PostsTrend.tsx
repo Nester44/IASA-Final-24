@@ -81,10 +81,10 @@ const PostsTrend = ({ posts }: Props) => {
 					/>
 					<Legend />
 					{/* <Bar dataKey='twitter' stackId='a' fill='#1BA0F1' /> */}
-					<Bar dataKey='mctoday' stackId='a' fill='#FFE043' />
-					<Bar dataKey='cnn' stackId='a' fill='#FE0000' />
-					<Bar dataKey='bbc-news' stackId='a' fill='#B80000' />
-					<Bar dataKey='breitbart-news' stackId='a' fill='#FF5501' />
+					<Bar dataKey='mctoday' stackId='a' fill='#4ade80' />
+					<Bar dataKey='cnn' stackId='a' fill='#60a5fa' />
+					<Bar dataKey='bbc-news' stackId='a' fill='#f87171' />
+					<Bar dataKey='breitbart-news' stackId='a' fill='#fbbf24' />
 				</BarChart>
 			</ResponsiveContainer>
 		</div>

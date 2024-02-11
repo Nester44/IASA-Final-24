@@ -8,11 +8,13 @@ type Props = {
 const Feed = ({ posts }: Props) => {
 	return (
 		<div className='md:columns-2 lg:columns-3 gap-4'>
-			{posts.map((post) => (
-				<div key={post.id} className='break-inside-avoid mb-4'>
-					<PostCard {...post} />
-				</div>
-			))}
+			{posts
+				.filter((p) => p.content)
+				.map((post) => (
+					<div key={post.id} className='break-inside-avoid mb-4'>
+						<PostCard {...post} />
+					</div>
+				))}
 		</div>
 	)
 }

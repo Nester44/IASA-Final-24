@@ -7,13 +7,13 @@ const Cloud = ({ keywords }: Props) => {
 	const data = keywords.map(([text, value]) => ({ text, value: 1 / value }))
 
 	return (
-		<div className=' overflow-hidden mb-8 relative'>
+		<div className='mb-8'>
 			<WordCloud
 				data={data}
 				height={300}
 				font='ui-sans-serif'
 				fontWeight='bold'
-				fontSize={(word) => Math.log2(word.value) * 2}
+				fontSize={(word) => Math.log2(word.value) * 3}
 				padding={1}
 				random={Math.random}
 				fill={(_: any, i: number) => {
