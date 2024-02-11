@@ -69,7 +69,10 @@ const SourcesTrend = ({ posts }: Props) => {
 	const data = mapPostsToData(posts)
 	console.log(data)
 	return (
-		<div className='w-[350px] h-[350px] bg-slate-950'>
+		<div className='flex-grow-[1] h-[350px] bg-slate-950'>
+			<p className='text-center text-xl font-bold mb-8'>
+				Sentiments trend by sources
+			</p>
 			<ResponsiveContainer width='100%' height='100%'>
 				<BarChart
 					data={data}

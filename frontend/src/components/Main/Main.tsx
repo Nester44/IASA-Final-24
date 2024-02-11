@@ -34,20 +34,20 @@ const Main = ({ searchValues }: Props) => {
 	}
 
 	return (
-		<div className='lg:max-w-[1200px] h-full px-16 mx-auto mt-4 mb-16'>
+		<div className='xl:max-w-[1200px] md:max-w[700px] lg:max-w-[1000px] h-full w-full mx-auto mt-4 mb-16'>
 			<Tabs
 				defaultValue='feed'
-				className='flex justify-center flex-col items-center space-y-8'
+				className='flex justify-center flex-col max-w-full items-center space-y-8'
 			>
 				<TabsList>
 					<TabsTrigger value='feed'>Feed</TabsTrigger>
 					<TabsTrigger value='charts'>Analytics</TabsTrigger>
 				</TabsList>
 
-				<TabsContent value='feed'>
+				<TabsContent value='feed' className='max-w-full'>
 					<Feed posts={data.posts} />
 				</TabsContent>
-				<TabsContent value='charts'>
+				<TabsContent value='charts' className='w-full'>
 					<Charts {...data} />
 				</TabsContent>
 			</Tabs>

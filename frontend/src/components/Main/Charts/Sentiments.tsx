@@ -19,7 +19,10 @@ const Sentiments = ({
 		{ name: 'Negative', value: total_negatives },
 	]
 	return (
-		<div className='w-[350px] h-[350px]'>
+		<div className='flex-grow-[1] h-[350px]'>
+			<p className='text-center text-xl font-bold mb-8'>
+				Sentiments ratio
+			</p>
 			<ResponsiveContainer height='100%' width='100%'>
 				<PieChart>
 					<Pie dataKey='value' data={sentimentData} outerRadius={80}>

@@ -51,6 +51,16 @@ const Header = ({ onSubmit }: Props) => {
 		},
 	})
 
+	const getParams = (values: SearchFormValues) => {
+		const params = new URLSearchParams({
+			period: values.period,
+			q: values.query,
+			sources: values.sources.join(','),
+		})
+
+		return params
+	}
+
 	return (
 		<header className='px-8 pt-8 border-b-2'>
 			<Form {...form}>
@@ -96,6 +106,21 @@ const Header = ({ onSubmit }: Props) => {
 						/>
 
 						<Button type='submit'>Search</Button>
+						<Button
+							variant='link'
+							disabled={!form.formState.isValid}
+						>
+							<a
+								href={
+									import.meta.env.VITE_BACKEND_URL +
+									'rss?' +
+									getParams(form.getValues())
+								}
+								target='_blank'
+							>
+								Export
+							</a>
+						</Button>
 					</div>
 
 					<ScrollArea className='w-full whitespace-nowrap py-6'>

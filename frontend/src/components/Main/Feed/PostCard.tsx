@@ -4,20 +4,20 @@ import { Post } from '@/lib/api/fetchAnalytics'
 
 type Props = {} & Post
 
-const PostCard = ({ content, created, sentiment_rate, source }: Props) => {
+const PostCard = ({ content, created, sentiment_rate, source, url }: Props) => {
 	const iconSrc = sources.find((s) => s.id === source.id)?.iconSrc
 	return (
-		<Card className='flex flex-col'>
+		<Card className='flex flex-col overflow-hidden'>
 			<CardHeader>
 				<div className='flex justify-between'>
-					<div className='flex gap-4'>
+					<a href={url} className='flex gap-4' target='_blank'>
 						<img
 							src={iconSrc}
 							alt='twitter'
 							className='w-8 h-8 rounded'
 						/>
 						<p className='text-lg font-bold'>{source.name}</p>
-					</div>
+					</a>
 					<Sentiment sentiment_rate={sentiment_rate} />
 				</div>
 			</CardHeader>
