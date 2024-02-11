@@ -8,3 +8,4 @@ jellyfish==1.0.3
 segtok==1.5.11 
 yake==0.4.8
 stop-words==2018.7.23
+pandas==2.2.0

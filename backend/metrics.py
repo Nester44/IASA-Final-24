@@ -2,6 +2,7 @@ import pandas as pd
 from textblob import TextBlob
 from stop_words import get_stop_words
 import yake
+import string
 
 def get_keywords(post):
   stop_words_ukr = get_stop_words('ukrainian')
@@ -18,10 +19,15 @@ def get_keywords(post):
   kw_extractor = yake.KeywordExtractor(lan=language, n=max_ngram_size, dedupLim=deduplication_threshold, dedupFunc=deduplication_algo, windowsSize=windowSize, top=numOfKeywords, features=None, stopwords=stopwords_specific)
   return kw_extractor.extract_keywords(post)
 
+def preprocess(content):
+    to_delete = string.punctuation + '-«»“’'
+    result = content.translate(str.maketrans('', '', to_delete))
+    return result.lower()
+
 def get_keywords_from_data_list(data_list):
     all_content = ""
     for data in data_list:
-        content = data["content"]
+        content = preprocess(data["content"])
         all_content += content + " "
     keywords = get_keywords(all_content)
     keywords_data = {
