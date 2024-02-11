@@ -12,7 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 import html2text
 import locale
-import concurrent.futures
+import rfeed
 
 
 _time_periods = {
@@ -132,7 +132,7 @@ def _get_mctoday_content(soup):
     wrapper = soup.select('.content-inner,.post-content,.main-content')[0]
     for paragraph in wrapper.findAll('p'):
         contents = paragraph.contents[0]
-        if contents is not None:
+        if contents is not None and 'Редактор' not in contents:
             text = h.handle(str(contents))
             content += text
 
@@ -141,9 +141,11 @@ def _get_mctoday_content(soup):
 
 def _get_mctoday_timestamp(soup):
     date_text = soup.select('.meta-datetime')[0].contents[0]
-    locale.setlocale(locale.LC_TIME, 'uk_UA')
-    # Set back
-    return int(time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple()))
+    try:
+        locale.setlocale(locale.LC_TIME, 'uk_UA')
+        return int(time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple()))
+    except locale.Error:
+        return 0
 
 
 class MctodayFetcher(Fetcher):
@@ -254,6 +256,7 @@ def create_article_dict(article):
 def get_articles_from_sources(search_query, api_key, sources, from_date):
     from_obj = datetime.fromtimestamp(from_date)
     params = {'q': search_query, 'apiKey': api_key, 'sources': ','.join(sources), 'from': from_obj.strftime('%Y-%m-%d')}
+    print(params)
     url = 'https://newsapi.org/v2/everything'
 
     try:
@@ -263,11 +266,8 @@ def get_articles_from_sources(search_query, api_key, sources, from_date):
             data = response.json()
             concrete_data_list = []
             if "articles" in data:
-                with concurrent.futures.ThreadPoolExecutor() as executor:
-                    results = list(executor.map(create_article_dict, data["articles"]))
-                for result in results:
-                    if result["content"] is not None:
-                        concrete_data_list.append(result)
+                for article in data["articles"]:
+                    concrete_data_list.append(create_article_dict(article))
 
             return concrete_data_list
         else:
@@ -281,3 +281,30 @@ class NewsFetcher(Fetcher):
         api_key = os.environ.get('NEWS_API_KEY')
 
         return get_articles_from_sources(query, api_key, sources, self.min_timestamp)
+
+
+def generate_rss_feed(query, sources):
+    fetcher = NewsFetcher()
+    fetcher.set_period(7)
+    articles = fetcher.fetch_all(query, sources)
+
+    items = []
+
+    for article in articles:
+        item = rfeed.Item(
+            title=article['title'],
+            link=article['url'],
+            description=article['content'],
+            pubDate=datetime.fromtimestamp(article['created'])
+        )
+        items.append(item)
+
+    feed_description = f'With keyword "{query}"'
+    feed = rfeed.Feed(
+        title=f'News from popular providers with keyword {query}',
+        link='https://www.bbc.com',
+        description=feed_description,
+        items=items
+    )
+
+    return feed.rss()
