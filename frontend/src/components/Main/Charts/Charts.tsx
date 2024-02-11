@@ -13,16 +13,15 @@ const Charts = ({
 	posts,
 }: Props) => {
 	return (
-		<div className='flex w-full'>
+		<div className='w-full flex space-x-4'>
 			<Sentiments
 				total_negatives={total_negatives}
 				total_neutral={total_neutral}
 				total_positives={total_positives}
 			/>
 
-			<SourcesTrend posts={posts} />
-
 			<PostsTrend posts={posts} />
+			<SourcesTrend posts={posts} />
 		</div>
 	)
 }

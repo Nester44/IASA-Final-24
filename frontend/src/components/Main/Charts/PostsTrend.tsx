@@ -56,7 +56,10 @@ const PostsTrend = ({ posts }: Props) => {
 	console.log(data)
 
 	return (
-		<div className='w-[600px] h-[350px]'>
+		<div className='flex-grow-[2] h-[350px]'>
+			<p className='text-center text-xl font-bold mb-8'>
+				Posts trend over time by sources
+			</p>
 			<ResponsiveContainer width='100%' height='100%'>
 				<BarChart
 					width={500}
@@ -72,15 +75,16 @@ const PostsTrend = ({ posts }: Props) => {
 					<CartesianGrid strokeDasharray='3 3' />
 					<XAxis dataKey='date' />
 					<YAxis min={0} max={32} />
-					<Tooltip labelStyle={{ color: 'red' }} />
+					<Tooltip
+						wrapperClassName='p-2 rounded-lg border shadow-lg'
+						contentStyle={{ background: 'black', border: 'none' }}
+					/>
 					<Legend />
-					<Bar dataKey='twitter' stackId='a' fill='#8884d8' />
-					<Bar dataKey='mctoday' stackId='a' fill='#82ca9d' />
-					<Bar dataKey='cnn' stackId='a' fill='red' />
-					<Bar dataKey='bbc-news' stackId='a' fill='green' />
-					<Bar dataKey='breitbart-news' stackId='a' fill='blue' />
-
-					{/* |  | "bbc" | "cnn" | "breitbart" */}
+					{/* <Bar dataKey='twitter' stackId='a' fill='#1BA0F1' /> */}
+					<Bar dataKey='mctoday' stackId='a' fill='#FFE043' />
+					<Bar dataKey='cnn' stackId='a' fill='#FE0000' />
+					<Bar dataKey='bbc-news' stackId='a' fill='#B80000' />
+					<Bar dataKey='breitbart-news' stackId='a' fill='#FF5501' />
 				</BarChart>
 			</ResponsiveContainer>
 		</div>
