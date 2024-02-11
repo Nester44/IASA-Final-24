@@ -47,12 +47,16 @@ const mapPostsToData = (posts: Post[]): Data[] => {
 }
 
 const PostsTrend = ({ posts }: Props) => {
-	const data = mapPostsToData(posts)
+	const data = mapPostsToData(posts).sort((a, b) => {
+		const aDate = new Date(a.date)
+		const bDate = new Date(b.date)
+		return aDate.getTime() - bDate.getTime()
+	})
 
 	console.log(data)
 
 	return (
-		<div className='w-[600px] h-[400px]'>
+		<div className='w-[600px] h-[350px]'>
 			<ResponsiveContainer width='100%' height='100%'>
 				<BarChart
 					width={500}
@@ -72,6 +76,10 @@ const PostsTrend = ({ posts }: Props) => {
 					<Legend />
 					<Bar dataKey='twitter' stackId='a' fill='#8884d8' />
 					<Bar dataKey='mctoday' stackId='a' fill='#82ca9d' />
+					<Bar dataKey='cnn' stackId='a' fill='red' />
+					<Bar dataKey='bbc-news' stackId='a' fill='green' />
+					<Bar dataKey='breitbart-news' stackId='a' fill='blue' />
+
 					{/* |  | "bbc" | "cnn" | "breitbart" */}
 				</BarChart>
 			</ResponsiveContainer>
