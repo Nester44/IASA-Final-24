@@ -25,6 +25,7 @@
     "clsx": "^2.1.0",
     "lucide-react": "^0.323.0",
     "react": "^18.2.0",
+    "react-d3-cloud": "^1.0.6",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.50.1",
     "recharts": "^2.12.0",

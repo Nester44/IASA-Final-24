@@ -24,12 +24,7 @@ export type Analytics = {
 	total_negatives: number
 	total_neutral: number
 	posts: Post[]
-	keywords: [
-		{
-			word: string
-			value: number
-		},
-	]
+	keywords: [[string, number]]
 }
 
 export async function fetchAnalytics(

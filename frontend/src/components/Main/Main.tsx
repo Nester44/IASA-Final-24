@@ -34,7 +34,7 @@ const Main = ({ searchValues }: Props) => {
 	}
 
 	return (
-		<div className='xl:max-w-[1200px] h-full w-full mx-auto mt-4 mb-16'>
+		<div className='xl:max-w-[1200px] md:max-w[700px] lg:max-w-[1000px] h-full w-full mx-auto mt-4 mb-16'>
 			<Tabs
 				defaultValue='feed'
 				className='flex justify-center flex-col w-full items-center space-y-8'
