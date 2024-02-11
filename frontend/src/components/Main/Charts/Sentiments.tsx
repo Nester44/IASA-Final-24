@@ -19,9 +19,9 @@ const Sentiments = ({
 		{ name: 'Negative', value: total_negatives },
 	]
 	return (
-		<div className='w-72 h-[250px]'>
+		<div className='w-[350px] h-[350px]'>
 			<ResponsiveContainer height='100%' width='100%'>
-				<PieChart width={400} height={400}>
+				<PieChart>
 					<Pie dataKey='value' data={sentimentData} outerRadius={80}>
 						{sentimentData.map((_, index) => (
 							<Cell key={`cell-${index}`} fill={COLORS[index]} />
