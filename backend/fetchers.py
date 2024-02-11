@@ -236,17 +236,20 @@ def create_article_dict(article):
     scrape_function = source_to_function.get(article['source']['id'])
     content = scrape_function(article['url'])
 
+    time_obj = datetime.strptime(article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
+    timestamp = int(time.mktime(time_obj.timetuple()))
+
     return {
         "source": article["source"],
         "title": article["title"],
         "url": article["url"],
-        "created": article["publishedAt"],
+        "created": timestamp,
         "content": content
     }
 
 
 def get_articles_from_sources(search_query, api_key, sources, from_date, to_date):
-    params = {'q': search_query, 'apiKey': api_key, 'sources': ','.join(sources), 'from': from_date, 'to': to_date}
+    params = {'q': search_query, 'apiKey': api_key, 'sources': ','.join(sources), 'from': int(from_date), 'to': int(to_date)}
     url = 'https://newsapi.org/v2/everything'
 
     try:
@@ -258,7 +261,6 @@ def get_articles_from_sources(search_query, api_key, sources, from_date, to_date
             if "articles" in data:
                 for article in data["articles"]:
                     concrete_data_list.append(create_article_dict(article))
-                print(json.dumps(concrete_data_list, indent=4))
 
             return concrete_data_list
         else:
@@ -268,15 +270,10 @@ def get_articles_from_sources(search_query, api_key, sources, from_date, to_date
 
 
 class NewsFetcher(Fetcher):
-    def fetch_all(self, query, url_scraper, sources):
-
+    def fetch_all(self, query, sources):
         # From_date depends on the mode selected by the user
         from_date = datetime.timestamp(datetime.today() - timedelta(days=1))
 
         api_key = os.environ.get('NEWS_API_KEY')
 
-        # Search_query is set by input
-        search_query = ''
-
-        return get_articles_from_sources(search_query, api_key, sources, from_date, self.min_timestamp)
-
+        return get_articles_from_sources(query, api_key, sources, from_date, self.min_timestamp)
