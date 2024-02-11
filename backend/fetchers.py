@@ -1,4 +1,5 @@
 from selenium import webdriver
+from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 
@@ -64,7 +65,9 @@ class XFetcher(Fetcher):
         self.base_scrolls = 5
         self.scroll_increase = 0.75
 
-        self.driver = webdriver.Firefox()
+        options = FirefoxOptions()
+        options.add_argument("--headless")
+        self.driver = webdriver.Firefox(options=options)
         self.driver.get(self.base_url)
         self.driver.add_cookie({"name": "auth_token", "value": os.environ.get('TWITTER_COOKIE')})
 
