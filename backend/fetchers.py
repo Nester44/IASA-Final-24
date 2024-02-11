@@ -132,7 +132,7 @@ def _get_mctoday_content(soup):
     wrapper = soup.select('.content-inner,.post-content,.main-content')[0]
     for paragraph in wrapper.findAll('p'):
         contents = paragraph.contents[0]
-        if contents is not None:
+        if contents is not None and 'Редактор' not in contents:
             text = h.handle(str(contents))
             content += text
 
@@ -141,9 +141,11 @@ def _get_mctoday_content(soup):
 
 def _get_mctoday_timestamp(soup):
     date_text = soup.select('.meta-datetime')[0].contents[0]
-    locale.setlocale(locale.LC_TIME, 'uk_UA')
-    # Set back
-    return int(time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple()))
+    try:
+        locale.setlocale(locale.LC_TIME, 'uk_UA')
+        return int(time.mktime(datetime.strptime(str(date_text), "%d %b %Y").timetuple()))
+    except locale.Error:
+        return 0
 
 
 class MctodayFetcher(Fetcher):

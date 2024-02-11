@@ -10,3 +10,4 @@ yake==0.4.8
 stop-words==2018.7.23
 pandas==2.2.0
 rfeed==1.1.1
+textblob==0.17.0

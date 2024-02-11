@@ -9,9 +9,12 @@ RUN apt update
 RUN apt upgrade -y
 RUN apt install -y firefox-esr
 
-RUN apt-get install -y locales
-RUN locale-gen uk_UA
-RUN dpkg-reconfigure locales
+RUN apt-get install -y locales && \
+    sed -i -e 's/# uk_UA.UTF-8 UTF-8/uk_UA.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales
+
+ENV LANG uk_UA.UTF-8
+ENV LC_ALL uk_UA.UTF-8
 
 RUN apt install -y \
        libx11-xcb1 \
