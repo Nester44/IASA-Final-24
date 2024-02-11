@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 import html2text
 import locale
 import json
+import rfeed
 
 
 _time_periods = {
@@ -279,3 +280,29 @@ class NewsFetcher(Fetcher):
         api_key = os.environ.get('NEWS_API_KEY')
 
         return get_articles_from_sources(query, api_key, sources, self.min_timestamp)
+
+
+def generate_rss_feed(query, sources):
+    fetcher = NewsFetcher()
+    articles = fetcher.fetch_all(query, sources)
+
+    items = []
+
+    for article in articles:
+        item = rfeed.Item(
+            title=article['title'],
+            link=article['url'],
+            description=article['content'],
+            pubDate=datetime.fromtimestamp(article['created'])
+        )
+        items.append(item)
+
+    feed_description = f'With keyword "{query}"'
+    feed = rfeed.Feed(
+        title='News from popular providers',
+        link='https://www.bbc.com',
+        description=feed_description,
+        items=items
+    )
+
+    return feed.rss()
