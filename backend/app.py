@@ -21,7 +21,7 @@ source_fetchers = {
 
 nf = NewsFetcher()
 
-news_fetchers = {'bbc': 'bbc-news', 'cnn': 'cnn', 'breitbart': 'breitbart-news'}
+news_fetchers = ['bbc-news', 'cnn', 'breitbart-news']
 
 @app.route("/analytics", methods=["GET"])
 @cross_origin()
@@ -60,8 +60,7 @@ def fetch():
     
     if len(news_sources) != 0:
         nf.set_period(days)
-        news_sources_keys = [news_fetchers[source] for source in news_sources]
-        posts = nf.fetch_all(query, news_sources_keys)
+        posts = nf.fetch_all(query, news_sources)
         for post in posts:
             post['id'] = post_id
             post_id += 1
