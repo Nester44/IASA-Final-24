@@ -12,7 +12,6 @@ import requests
 from bs4 import BeautifulSoup
 import html2text
 import locale
-import json
 import rfeed
 
 
