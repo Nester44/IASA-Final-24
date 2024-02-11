@@ -284,6 +284,7 @@ class NewsFetcher(Fetcher):
 
 def generate_rss_feed(query, sources):
     fetcher = NewsFetcher()
+    fetcher.set_period(7)
     articles = fetcher.fetch_all(query, sources)
 
     items = []
@@ -299,7 +300,7 @@ def generate_rss_feed(query, sources):
 
     feed_description = f'With keyword "{query}"'
     feed = rfeed.Feed(
-        title='News from popular providers',
+        title=f'News from popular providers with keyword {query}',
         link='https://www.bbc.com',
         description=feed_description,
         items=items

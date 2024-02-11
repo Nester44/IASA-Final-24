@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
-from fetchers import XFetcher, MctodayFetcher, NewsFetcher, period_to_days
+from fetchers import XFetcher, MctodayFetcher, NewsFetcher, period_to_days, generate_rss_feed
 from metrics import get_metrics
 
 app = Flask(__name__)
@@ -68,6 +68,13 @@ def fetch():
 
     return get_metrics(results)
 
+@app.route("/rss", methods=["GET"])
+@cross_origin()
+def rss():
+    query = request.args.get("q")
+    if query is None:
+        return "Query aren't specified", 400
+    return generate_rss_feed(query, news_fetchers)
 
 if __name__ == "__main__":
     app.run(debug=True)
