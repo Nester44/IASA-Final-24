@@ -11,6 +11,7 @@ import requests
 from bs4 import BeautifulSoup
 import html2text
 import locale
+import json
 
 
 _time_periods = {
@@ -178,3 +179,100 @@ class MctodayFetcher(Fetcher):
             posts.append(post)
 
         return posts
+
+
+def scrape_content_bbc(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            html_content = response.text
+            soup = BeautifulSoup(html_content, 'html.parser')
+            rich_text_wrappers = soup.find_all(class_="ssrcss-11r1m41-RichTextComponentWrapper ep2nwvo0")
+            article_content = ''.join([wrapper.get_text() for wrapper in rich_text_wrappers])
+            return article_content
+        else:
+            print('Request error:', response.status_code)
+    except Exception as e:
+        print('Error occurred while parsing the page:', e)
+
+
+def scrape_content_cnn(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            html_content = response.text
+            soup = BeautifulSoup(html_content, 'html.parser')
+            rich_text_wrappers = soup.find_all(class_="paragraph inline-placeholder")
+            article_content = ''.join([wrapper.get_text() for wrapper in rich_text_wrappers])
+            return article_content
+        else:
+            print('Request error:', response.status_code)
+    except Exception as e:
+        print('Error occurred while parsing the page:', e)
+
+
+def scrape_content_breitbart(url):
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            html_content = response.text
+            soup = BeautifulSoup(html_content, 'html.parser')
+            rich_text_wrappers = soup.find_all(class_="entry-content")
+            article_content = ''.join([wrapper.get_text() for wrapper in rich_text_wrappers])
+            return article_content
+        else:
+            print('Request error:', response.status_code)
+    except Exception as e:
+        print('Error occurred while parsing the page:', e)
+
+
+def create_article_dict(article):
+    source_to_function = {
+        'bbc-news': scrape_content_bbc,
+        'cnn': scrape_content_cnn,
+        'breitbart-news': scrape_content_breitbart
+    }
+
+    scrape_function = source_to_function.get(article['source']['id'])
+    content = scrape_function(article['url'])
+
+    time_obj = datetime.strptime(article["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
+    timestamp = int(time.mktime(time_obj.timetuple()))
+
+    return {
+        "source": article["source"],
+        "title": article["title"],
+        "url": article["url"],
+        "created": timestamp,
+        "content": content
+    }
+
+
+def get_articles_from_sources(search_query, api_key, sources, from_date):
+    from_obj = datetime.fromtimestamp(from_date)
+    params = {'q': search_query, 'apiKey': api_key, 'sources': ','.join(sources), 'from': from_obj.strftime('%Y-%m-%d')}
+    print(params)
+    url = 'https://newsapi.org/v2/everything'
+
+    try:
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            data = response.json()
+            concrete_data_list = []
+            if "articles" in data:
+                for article in data["articles"]:
+                    concrete_data_list.append(create_article_dict(article))
+
+            return concrete_data_list
+        else:
+            print('Request error:', response.status_code)
+    except Exception as e:
+        print('Error occurred:', e)
+
+
+class NewsFetcher(Fetcher):
+    def fetch_all(self, query, sources):
+        api_key = os.environ.get('NEWS_API_KEY')
+
+        return get_articles_from_sources(query, api_key, sources, self.min_timestamp)

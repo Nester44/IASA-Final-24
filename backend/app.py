@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 
-from fetchers import XFetcher, MctodayFetcher, period_to_days
+from fetchers import XFetcher, MctodayFetcher, NewsFetcher, period_to_days
 from metrics import get_metrics
 
 app = Flask(__name__)
@@ -19,6 +19,9 @@ source_fetchers = {
     'mctoday': MctodayFetcher()
 }
 
+nf = NewsFetcher()
+
+news_fetchers = {'bbc': 'bbc-news', 'cnn': 'cnn', 'breitbart': 'breitbart-news'}
 
 @app.route("/analytics", methods=["GET"])
 @cross_origin()
@@ -35,17 +38,30 @@ def fetch():
         return "Invalid time period", 400
 
     fetchers = []
+    news_sources = []
     for source in sources.split(','):
-        if source not in source_fetchers:
+        if source in source_fetchers:
+            fetcher = source_fetchers[source]
+            fetchers.append(fetcher)
+        elif source in news_fetchers:
+            news_sources.append(source)
+        else:
             return "Unknown source", 400
-        fetcher = source_fetchers[source]
-        fetchers.append(fetcher)
 
     results = []
     post_id = 0
     for fetcher in fetchers:
         fetcher.set_period(days)
         posts = fetcher.fetch(query)
+        for post in posts:
+            post['id'] = post_id
+            post_id += 1
+        results.extend(posts)
+    
+    if len(news_sources) != 0:
+        nf.set_period(days)
+        news_sources_keys = [news_fetchers[source] for source in news_sources]
+        posts = nf.fetch_all(query, news_sources_keys)
         for post in posts:
             post['id'] = post_id
             post_id += 1
