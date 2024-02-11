@@ -14,7 +14,7 @@ def get_keywords(post):
   deduplication_threshold = 0.5
   deduplication_algo = 'seqm'
   windowSize = 3
-  numOfKeywords = 20
+  numOfKeywords = 100
 
   kw_extractor = yake.KeywordExtractor(lan=language, n=max_ngram_size, dedupLim=deduplication_threshold, dedupFunc=deduplication_algo, windowsSize=windowSize, top=numOfKeywords, features=None, stopwords=stopwords_specific)
   return kw_extractor.extract_keywords(post)
@@ -49,6 +49,8 @@ def sentiment_analyser(data_list):
 
     for index, row in sentiment_df.iterrows():
         data_list[index]["sentiment_rate"] = row["polarity"]
+        data_list[index]["content"] = data_list[index]["content"][:255]
+        data_list[index]["id"] = index
         posts_data.append(data_list[index])
 
     result = {
