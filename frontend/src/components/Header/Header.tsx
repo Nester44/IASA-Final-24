@@ -13,9 +13,9 @@ import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 export const sources = [
 	{ id: 'twitter', name: 'Twitter', iconSrc: 'twitter.png' },
 	{ id: 'mctoday', name: 'MC Today', iconSrc: 'mctoday.png' },
-	{ id: 'bbc', name: 'BBC', iconSrc: 'bbc.jpeg' },
+	{ id: 'bbc-news', name: 'BBC', iconSrc: 'bbc.jpeg' },
 	{ id: 'cnn', name: 'CNN', iconSrc: 'cnn.png' },
-	{ id: 'breitbart', name: 'Breitbart', iconSrc: 'breitbart.png' },
+	{ id: 'breitbart-news', name: 'Breitbart', iconSrc: 'breitbart.png' },
 ] as const
 
 export type SourceId = typeof sources[number]['id']
@@ -27,7 +27,9 @@ const formSchema = z.object({
 	}),
 	period: z.enum(['day', 'week', 'month']),
 	sources: z
-		.array(z.enum(['mctoday', 'bbc', 'cnn', 'twitter', 'breitbart']))
+		.array(
+			z.enum(['mctoday', 'bbc-news', 'cnn', 'twitter', 'breitbart-news']),
+		)
 		.refine((sources) => sources.length > 0, {
 			message: 'At least one source must be selected.',
 		}),

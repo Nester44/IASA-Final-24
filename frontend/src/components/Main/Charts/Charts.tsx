@@ -1,5 +1,6 @@
 import { Analytics } from '@/lib/api/fetchAnalytics'
 
+import PostsTrend from './PostsTrend'
 import Sentiments from './Sentiments'
 import SourcesTrend from './SourcesTrend'
 
@@ -20,6 +21,8 @@ const Charts = ({
 			/>
 
 			<SourcesTrend posts={posts} />
+
+			<PostsTrend posts={posts} />
 		</div>
 	)
 }
