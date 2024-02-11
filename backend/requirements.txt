@@ -2,9 +2,9 @@ beautifulsoup4==4.12.3
 Flask==3.0.2
 Flask_Cors==4.0.0
 html2text==2020.1.16
+pandas==2.2.0
 Requests==2.31.0
 selenium==4.17.2
-jellyfish==1.0.3 
-segtok==1.5.11 
+stop_words==2018.7.23
+textblob==0.17.1
 yake==0.4.8
-stop-words==2018.7.23
