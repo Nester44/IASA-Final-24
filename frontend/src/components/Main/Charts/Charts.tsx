@@ -15,7 +15,7 @@ const Charts = ({
 	keywords,
 }: Props) => {
 	return (
-		<div className='flex flex-col w-full'>
+		<div className='flex flex-col w-full mb-20'>
 			<Cloud keywords={keywords} />
 			<div className='w-full flex space-x-4'>
 				<Sentiments
